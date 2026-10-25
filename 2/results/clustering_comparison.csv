@@ -1,0 +1,4 @@
+Algorithm,N_Clusters,Noise_Points,Noise_Pct,Silhouette,Davies_Bouldin,Calinski_Harabasz
+K-Means,4,0,0.0,0.3199,0.9021,1575.63
+Hierarchical (ward),4,0,0.0,0.3317,0.8735,1410.12
+DBSCAN,3,220,6.07,0.3353,1.1554,1512.32

@@ -1,0 +1,41 @@
+{
+  "chosen_k": 4,
+  "best_linkage": "ward",
+  "best_dbscan_eps": 0.879,
+  "best_dbscan_min_samples": 10,
+  "n_rows_after_outlier_removal": 3623,
+  "n_rows_removed": 376,
+  "pct_removed": 9.4,
+  "skewed_cols": [
+    "cc3_miles",
+    "cc2_miles",
+    "Qual_miles",
+    "Flight_miles_12mo",
+    "Flight_trans_12",
+    "Balance",
+    "Bonus_miles",
+    "Bonus_trans"
+  ],
+  "pca_explained_variance": [
+    39.73,
+    20.83
+  ],
+  "kmeans": {
+    "silhouette": 0.3199,
+    "davies_bouldin": 0.9021,
+    "calinski_harabasz": 1575.63
+  },
+  "hierarchical": {
+    "silhouette": 0.3317,
+    "davies_bouldin": 0.8735,
+    "calinski_harabasz": 1410.12
+  },
+  "dbscan": {
+    "n_clusters": 3,
+    "n_noise": 220,
+    "noise_pct": 6.07,
+    "silhouette": 0.3353,
+    "davies_bouldin": 1.1554,
+    "calinski_harabasz": 1512.32
+  }
+}

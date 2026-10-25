@@ -1,0 +1,12 @@
+Attribute,Pearson_r,Abs_r
+alcohol,0.4803,0.4803
+volatile acidity,-0.3952,0.3952
+sulphates,0.2488,0.2488
+citric acid,0.2281,0.2281
+density,-0.1843,0.1843
+total sulfur dioxide,-0.1779,0.1779
+chlorides,-0.131,0.131
+fixed acidity,0.119,0.119
+pH,-0.0552,0.0552
+free sulfur dioxide,-0.0505,0.0505
+residual sugar,0.0136,0.0136

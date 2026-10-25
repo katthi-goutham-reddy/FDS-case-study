@@ -1,0 +1,46 @@
+{
+  "n_rows_total": 1599,
+  "n_rows_after_dedup": 1359,
+  "n_duplicates_removed": 240,
+  "train_size": 1087,
+  "test_size": 272,
+  "pearson_alcohol_quality": {
+    "r": 0.4803,
+    "p_value": 2.2787211325406987e-79
+  },
+  "regression": {
+    "mae": 0.5041,
+    "mse": 0.431,
+    "rmse": 0.6565,
+    "r2_test": 0.3915,
+    "r2_train": 0.352
+  },
+  "top_predictors_by_std_coef": [
+    {
+      "Feature": "alcohol",
+      "Std_Coef": 0.334
+    },
+    {
+      "Feature": "volatile acidity",
+      "Std_Coef": -0.1785
+    },
+    {
+      "Feature": "sulphates",
+      "Std_Coef": 0.1485
+    }
+  ],
+  "top_corr_with_quality": [
+    {
+      "Attribute": "alcohol",
+      "Pearson_r": 0.4803
+    },
+    {
+      "Attribute": "volatile acidity",
+      "Pearson_r": -0.3952
+    },
+    {
+      "Attribute": "sulphates",
+      "Pearson_r": 0.2488
+    }
+  ]
+}

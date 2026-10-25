@@ -1,0 +1,4 @@
+Attribute,Mean,Median,Mode,Std_Dev,Skewness
+alcohol,10.4323,10.2,9.5,1.0821,0.8598
+volatile acidity,0.5295,0.52,0.5,0.183,0.7293
+residual sugar,2.5234,2.2,2.0,1.3523,4.5482
