@@ -1,6 +1,0 @@
-Metric,Value,Meaning
-MAE,0.5041,Average absolute error in quality points
-MSE,0.431,Average squared error (penalises large errors more)
-RMSE,0.6565,Root MSE in quality points (same unit as target)
-R2 (test),0.3915,Fraction of quality variance explained by the model
-R2 (train),0.352,Train R2 for overfitting check

@@ -1,21 +1,41 @@
+# Environments & Python Caches
 .venv/
+venv/
+env/
 __pycache__/
+*.py[cod]
+*$py.class
 .ipynb_checkpoints/
-__MACOSX/
+
+# Operating System Files
 .DS_Store
-.Rhistory
-preview/
-report/cbit_preview/
-report/preview/
-report/reference_preview_14/
-report/*.png
-2/report/preview/
-5/report/preview/
-reference_preview/
-reference_preview_25/
-extracted_ref_images/
-watermark_with_alpha.png
+Thumbs.db
+
+# Subdirectories and local development folders
+2/
+5/
+Case Study 2*/
+Case Study 5*/
+casestudies-jupyternb/
+figures/
+results/
+report/
+data/
 scratch/
+preview/
+reference_preview*/
+extracted_ref_images/
 .tempmediaStorage/
+
+# Local scripts & temp notes
+build_cbit_report.py
+build_combined_report.py
+CLAUDE.md
+PROMPT.md
+*.docx
+watermark_with_alpha.png
+cbit_logo.png
+fds_case_studies_2_and_5.ipynb
+FDS case study - 2,5*.pdf
+FDS_Case_Studies_2_and_5_160124733179_CBIT_format.pdf
 *160124733191*
-FDS case study - 2,5_160124733179.pdf
