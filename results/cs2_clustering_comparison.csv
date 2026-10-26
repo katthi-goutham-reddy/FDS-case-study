@@ -1,0 +1,4 @@
+Algorithm,Clusters,Silhouette,Davies-Bouldin,Calinski-Harabasz
+K-Means,4,0.3199,0.9021,1575.63
+Hierarchical (Ward),4,0.3317,0.8735,1410.12
+DBSCAN,3,0.3353,1.1554,1512.32

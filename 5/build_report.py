@@ -48,19 +48,18 @@ def build_pdf(student_name="<NAME>", roll_no="<ROLL NO>", section="<SECTION>", f
     # Read metrics & results
     with open('results/metrics.json', 'r') as f:
         metrics = json.load(f)
-    with open('results/task1_pearson.json', 'r') as f:
-        pearson = json.load(f)
-
+    
     stats_df = pd.read_csv('results/task1_stats.csv')
     cv_df = pd.read_csv('results/task1_cv.csv')
+    pearson = metrics['pearson_alcohol_quality']
     rank_df = pd.read_csv('results/task2_feature_correlation_rank.csv')
     reg_df = pd.read_csv('results/task3_regression_metrics.csv')
+    std_coef_df = pd.read_csv('results/task3_standardized_coefs.csv')
     vif_df = pd.read_csv('results/task3_vif.csv')
-    coef_df = pd.read_csv('results/task3_standardized_coefs.csv')
-    ols_df = pd.read_csv('results/task3_ols_pvalues.csv')
 
     os.makedirs('report', exist_ok=True)
-    pdf_path = f"report/CS5_Wine_Quality_Regression_{roll_no.replace('<', '').replace('>', '') if roll_no != '<ROLL NO>' else 'Report'}.pdf"
+    clean_roll = roll_no.replace('<', '').replace('>', '').strip()
+    pdf_path = f"report/CS5_Wine_Quality_Regression_{clean_roll if clean_roll and clean_roll != 'ROLL NO' else 'Report'}.pdf"
 
     doc = SimpleDocTemplate(
         pdf_path,
@@ -83,7 +82,7 @@ def build_pdf(student_name="<NAME>", roll_no="<ROLL NO>", section="<SECTION>", f
         fontName='Helvetica-Bold',
         fontSize=22,
         leading=28,
-        textColor=colors.HexColor("#722f37"),  # Wine red
+        textColor=colors.HexColor("#722f37"),
         alignment=1
     )
 
@@ -91,11 +90,11 @@ def build_pdf(student_name="<NAME>", roll_no="<ROLL NO>", section="<SECTION>", f
         'Heading1',
         parent=styles['Heading1'],
         fontName='Helvetica-Bold',
-        fontSize=13,
-        leading=17,
+        fontSize=12.5,
+        leading=16,
         textColor=colors.HexColor("#722f37"),
-        spaceBefore=14,
-        spaceAfter=6,
+        spaceBefore=10,
+        spaceAfter=4,
         keepWithNext=True
     )
 
@@ -103,11 +102,11 @@ def build_pdf(student_name="<NAME>", roll_no="<ROLL NO>", section="<SECTION>", f
         'Heading2',
         parent=styles['Heading2'],
         fontName='Helvetica-Bold',
-        fontSize=10.5,
-        leading=14,
-        textColor=colors.HexColor("#8b3a42"),
-        spaceBefore=10,
-        spaceAfter=4,
+        fontSize=10,
+        leading=13,
+        textColor=colors.HexColor("#8e3a43"),
+        spaceBefore=7,
+        spaceAfter=3,
         keepWithNext=True
     )
 
@@ -119,7 +118,7 @@ def build_pdf(student_name="<NAME>", roll_no="<ROLL NO>", section="<SECTION>", f
         leading=11,
         textColor=colors.HexColor("#555555"),
         alignment=1,
-        spaceAfter=8
+        spaceAfter=6
     )
 
     table_cell = ParagraphStyle(
@@ -144,7 +143,7 @@ def build_pdf(student_name="<NAME>", roll_no="<ROLL NO>", section="<SECTION>", f
     story = []
 
     # ================= 1. TITLE PAGE =================
-    story.append(Spacer(1, 4 * cm))
+    story.append(Spacer(1, 3.5 * cm))
     story.append(Paragraph("Chaitanya Bharathi Institute of Technology (CBIT)", ParagraphStyle('College', fontName='Helvetica-Bold', fontSize=14, leading=18, alignment=1, textColor=colors.HexColor("#333333"))))
     story.append(Spacer(1, 0.4 * cm))
     story.append(Paragraph("Department of Computer Science and Engineering", ParagraphStyle('Dept', fontName='Helvetica', fontSize=11, leading=15, alignment=1, textColor=colors.HexColor("#666666"))))
@@ -154,7 +153,7 @@ def build_pdf(student_name="<NAME>", roll_no="<ROLL NO>", section="<SECTION>", f
     story.append(Paragraph("CASE STUDY 5: WINE QUALITY PREDICTION", title_style))
     story.append(Spacer(1, 0.3 * cm))
     story.append(Paragraph("Statistical Analysis and Multiple Linear Regression on Physicochemical Properties", ParagraphStyle('Sub', fontName='Helvetica-Oblique', fontSize=11, leading=15, alignment=1, textColor=colors.HexColor("#444444"))))
-    story.append(HRFlowable(width="80%", thickness=2, color=colors.HexColor("#722f37"), spaceBefore=20, spaceAfter=30))
+    story.append(HRFlowable(width="80%", thickness=2, color=colors.HexColor("#722f37"), spaceBefore=20, spaceAfter=25))
 
     story.append(Spacer(1, 1.5 * cm))
 
@@ -190,7 +189,7 @@ def build_pdf(student_name="<NAME>", roll_no="<ROLL NO>", section="<SECTION>", f
         "measurements can predict wine quality scores using statistical tests and multiple linear regression.",
         normal
     ))
-    story.append(Spacer(1, 0.2*cm))
+    story.append(Spacer(1, 0.15*cm))
     story.append(Paragraph(
         "Key goals include: (1) conducting descriptive and inferential statistical evaluations for core chemical markers (alcohol, volatile acidity, "
         "residual sugar), (2) evaluating dispersion and testing the significance of linear relationships via hypothesis testing, "
@@ -209,7 +208,7 @@ def build_pdf(student_name="<NAME>", roll_no="<ROLL NO>", section="<SECTION>", f
         "and conflate two distinct chemical profiles.",
         normal
     ))
-    story.append(Spacer(1, 0.2*cm))
+    story.append(Spacer(1, 0.15*cm))
     story.append(Paragraph(
         "Data hygiene checks revealed 0 missing values and 240 duplicate rows (15.01%). These duplicate rows were dropped prior to modelling "
         "to prevent data leakage across train/test splits and guard against artificially optimistic evaluation metrics. "
@@ -227,10 +226,10 @@ def build_pdf(student_name="<NAME>", roll_no="<ROLL NO>", section="<SECTION>", f
         "To prevent data leakage, StandardScaler was fitted strictly on training features and subsequently used to transform the test set.",
         normal
     ))
-    story.append(Spacer(1, 0.2*cm))
+    story.append(Spacer(1, 0.15*cm))
 
     if os.path.exists('figures/00_methodology_flowchart.png'):
-        img = Image('figures/00_methodology_flowchart.png', width=14.5*cm, height=8*cm)
+        img = Image('figures/00_methodology_flowchart.png', width=14*cm, height=7*cm)
         story.append(img)
         story.append(Paragraph("Figure 1: End-to-end wine quality regression and diagnostic workflow", caption_style))
 
@@ -240,8 +239,9 @@ def build_pdf(student_name="<NAME>", roll_no="<ROLL NO>", section="<SECTION>", f
         "and R-squared (R2).",
         normal
     ))
+    story.append(PageBreak())
 
-    # ================= 5. STATISTICAL FINDINGS =================
+    # ================= 5. STATISTICAL FINDINGS (PAGE 3) =================
     story.append(Paragraph("4. Statistical Findings & Exploratory Data Analysis", h1))
     story.append(Paragraph(
         "<b>Task 1a & 1b: Central Tendency, Dispersion, and Relative Variability</b><br/>"
@@ -252,7 +252,7 @@ def build_pdf(student_name="<NAME>", roll_no="<ROLL NO>", section="<SECTION>", f
         "(median 2.20 g/dm3, mode 2.00 g/dm3), with a sparse tail of sweet dessert-style outliers.",
         normal
     ))
-    story.append(Spacer(1, 0.2*cm))
+    story.append(Spacer(1, 0.15*cm))
 
     # Table 1: Task 1a stats
     story.append(Paragraph("<b>Table 1: Descriptive Statistics and Skewness (Task 1a)</b>", h2))
@@ -275,11 +275,11 @@ def build_pdf(student_name="<NAME>", roll_no="<ROLL NO>", section="<SECTION>", f
         ('BACKGROUND', (0,0), (-1,0), colors.HexColor("#722f37")),
         ('GRID', (0,0), (-1,-1), 0.5, colors.HexColor("#cbd5e1")),
         ('ROWBACKGROUNDS', (0,1), (-1,-1), [colors.white, colors.HexColor("#fdf8f8")]),
-        ('TOPPADDING', (0,0), (-1,-1), 4),
-        ('BOTTOMPADDING', (0,0), (-1,-1), 4),
+        ('TOPPADDING', (0,0), (-1,-1), 3.5),
+        ('BOTTOMPADDING', (0,0), (-1,-1), 3.5),
     ]))
     story.append(t1)
-    story.append(Spacer(1, 0.2*cm))
+    story.append(Spacer(1, 0.15*cm))
 
     story.append(Paragraph(
         f"Coefficient of variation (CV) analysis revealed: Alcohol CV = {cv_df.loc[cv_df['Attribute']=='alcohol', 'CV(%)'].values[0]:.2f}%, "
@@ -289,7 +289,7 @@ def build_pdf(student_name="<NAME>", roll_no="<ROLL NO>", section="<SECTION>", f
         f"whereas CV normalizes dispersion by the mean, permitting valid comparison across differing physical units (% vol vs g/dm3).",
         normal
     ))
-    story.append(Spacer(1, 0.2*cm))
+    story.append(Spacer(1, 0.15*cm))
 
     story.append(Paragraph(
         f"<b>Task 1c: Pearson Correlation Hypothesis Test</b><br/>"
@@ -298,48 +298,57 @@ def build_pdf(student_name="<NAME>", roll_no="<ROLL NO>", section="<SECTION>", f
         f"Since p < 0.05, we reject H0 and conclude that a statistically significant, moderate positive linear relationship exists.",
         normal
     ))
-    story.append(Spacer(1, 0.2*cm))
+    story.append(Spacer(1, 0.15*cm))
 
     if os.path.exists('figures/01_quality_distribution.png'):
-        img = Image('figures/01_quality_distribution.png', width=11.5*cm, height=5.5*cm)
+        img = Image('figures/01_quality_distribution.png', width=13*cm, height=6.2*cm)
         story.append(img)
-        story.append(Paragraph("Figure 2: Wine quality score distribution showing severe concentration around scores 5 and 6", caption_style))
-
-    story.append(Paragraph(
-        "Quality score distribution analysis demonstrated significant class imbalance: scores 5 (577 wines, 42.5%) and 6 (535 wines, 39.4%) "
-        "comprise 81.8% of samples, while rare boundary scores 3 (10 wines) and 8 (17 wines) represent extreme tails. "
-        "Boxplots confirm that median alcohol content ascends systematically with quality (from ~9.8% at score 5 to ~12.1% at score 8).",
-        normal
-    ))
-    story.append(Spacer(1, 0.2*cm))
-
-    if os.path.exists('figures/02_alcohol_by_quality_boxplot.png'):
-        img = Image('figures/02_alcohol_by_quality_boxplot.png', width=11.5*cm, height=6*cm)
-        story.append(img)
-        story.append(Paragraph("Figure 3: Alcohol content distribution across quality tiers", caption_style))
+        story.append(Paragraph("Figure 2: Wine quality score distribution showing severe concentration around scores 5 and 6 (81.8% of wines)", caption_style))
 
     story.append(PageBreak())
 
+    # ================= 6. EDA CONTINUED (PAGE 4) =================
+    story.append(Paragraph("Task 2b: Alcohol Distribution Grouped by Quality Score", h2))
+    story.append(Paragraph(
+        "Boxplots illustrate a systematic upward trend in median alcohol content across quality grades: "
+        "median alcohol increases steadily from 9.60% at score 5 to 10.50% at score 6, 11.60% at score 7, and 12.50% at score 8. "
+        "A series of high-alcohol outliers appears in mid-tier wines (reaching up to 14.9%), indicating that high alcohol is necessary "
+        "but not sufficient on its own to achieve superior sensory scores.",
+        normal
+    ))
+    story.append(Spacer(1, 0.15*cm))
+
+    if os.path.exists('figures/02_alcohol_by_quality_boxplot.png'):
+        img = Image('figures/02_alcohol_by_quality_boxplot.png', width=13*cm, height=6.2*cm)
+        story.append(img)
+        story.append(Paragraph("Figure 3: Alcohol content distribution across quality tiers with median trend and outliers", caption_style))
+
+    story.append(Spacer(1, 0.15*cm))
+    story.append(Paragraph("Task 2c & 2d: Correlation Heatmap and Predictor Ranking", h2))
+
     if os.path.exists('figures/03_correlation_heatmap.png'):
-        img = Image('figures/03_correlation_heatmap.png', width=13*cm, height=8*cm)
+        img = Image('figures/03_correlation_heatmap.png', width=12*cm, height=7*cm)
         story.append(img)
         story.append(Paragraph("Figure 4: Correlation heatmap of all 11 physicochemical attributes and quality", caption_style))
 
     story.append(Paragraph(
         "Correlation ranking (Task 2d) identified the top two quality predictors: (1) Alcohol (r = +0.4803, moderate positive), "
-        "and (2) Volatile Acidity (r = -0.3952, moderate negative, reflecting vinegar-like acetic acid spoilage).",
+        "and (2) Volatile Acidity (r = -0.3952, moderate negative, reflecting vinegar-like acetic acid spoilage). "
+        "Noticeable inter-feature correlations include fixed acidity with citric acid (r = +0.67), fixed acidity with density (r = +0.67), "
+        "and fixed acidity with pH (r = -0.68), signalling potential collinearity in multiple regression.",
         normal
     ))
+    story.append(PageBreak())
 
-    # ================= 6. MODEL EVALUATION =================
+    # ================= 7. MODEL EVALUATION (PAGE 5) =================
     story.append(Paragraph("5. Predictive Modelling and Model Diagnostics", h1))
     story.append(Paragraph(
-        "A multiple linear regression model was trained on all 11 physicochemical features. "
+        "A multiple linear regression model was trained on all 11 physicochemical features with an 80:20 train-test split (1,087 train, 272 test). "
         "Test-set performance yielded MAE = 0.5041 quality points, MSE = 0.4310, and RMSE = 0.6565 quality points. "
-        "The test R2 of 0.3547 aligns closely with train R2 (0.3601), verifying that the model generalizes stably without overfitting.",
+        "The test R2 of 0.3915 aligns closely with train R2 (0.3520), verifying that the model generalizes stably without overfitting.",
         normal
     ))
-    story.append(Spacer(1, 0.2*cm))
+    story.append(Spacer(1, 0.15*cm))
 
     # Regression table
     story.append(Paragraph("<b>Table 2: Multiple Linear Regression Performance Metrics (Task 3c)</b>", h2))
@@ -357,87 +366,99 @@ def build_pdf(student_name="<NAME>", roll_no="<ROLL NO>", section="<SECTION>", f
         ('BACKGROUND', (0,0), (-1,0), colors.HexColor("#722f37")),
         ('GRID', (0,0), (-1,-1), 0.5, colors.HexColor("#cbd5e1")),
         ('ROWBACKGROUNDS', (0,1), (-1,-1), [colors.white, colors.HexColor("#fdf8f8")]),
-        ('TOPPADDING', (0,0), (-1,-1), 4),
-        ('BOTTOMPADDING', (0,0), (-1,-1), 4),
+        ('TOPPADDING', (0,0), (-1,-1), 3.5),
+        ('BOTTOMPADDING', (0,0), (-1,-1), 3.5),
     ]))
     story.append(t2)
-    story.append(Spacer(1, 0.2*cm))
+    story.append(Spacer(1, 0.15*cm))
 
     story.append(Paragraph(
-        "<b>Multicollinearity Diagnosis (VIF Table):</b><br/>"
+        "<b>Multicollinearity Diagnosis (VIF Analysis):</b><br/>"
         "Variance Inflation Factor (VIF) evaluation on training data identified moderate-to-high multicollinearity: "
         "Fixed Acidity exhibited VIF = 7.95, and Density had VIF = 6.31 (both VIF > 5). "
         "This collinearity arises because fixed acidity directly influences solution density and pH (r = -0.68). "
         "While overall predictions remain unbiased, individual partial regression slope coefficients for these variables must be interpreted cautiously.",
         normal
     ))
-    story.append(Spacer(1, 0.2*cm))
+    story.append(Spacer(1, 0.15*cm))
+
+    if os.path.exists('figures/04_standardized_coefficients.png'):
+        img = Image('figures/04_standardized_coefficients.png', width=13*cm, height=6.2*cm)
+        story.append(img)
+        story.append(Paragraph("Figure 5: Standardized regression coefficients ranked by absolute magnitude with direction coding", caption_style))
 
     story.append(Paragraph(
-        "<b>Standardized Coefficients & OLS Significance:</b><br/>"
-        "Standardized coefficients (fitted on training data scaled via StandardScaler) rank relative predictor impact: "
-        "1. Alcohol (beta = +0.3340), 2. Volatile Acidity (beta = -0.1785), 3. Sulphates (beta = +0.1485), "
-        "4. Total Sulfur Dioxide (beta = -0.1236), and 5. pH (beta = -0.1215). "
+        "Standardized coefficients rank relative predictor impact: 1. Alcohol (beta = +0.3340), 2. Volatile Acidity (beta = -0.1785), "
+        "3. Sulphates (beta = +0.1485), 4. Total Sulfur Dioxide (beta = -0.1236), and 5. pH (beta = -0.1215). "
         "Statsmodels OLS confirmed that volatile acidity, chlorides, total sulfur dioxide, sulphates, and alcohol are statistically significant (p < 0.05).",
         normal
     ))
-    story.append(Spacer(1, 0.2*cm))
+    story.append(PageBreak())
 
-    if os.path.exists('figures/04_standardized_coefficients.png'):
-        img = Image('figures/04_standardized_coefficients.png', width=12*cm, height=6*cm)
-        story.append(img)
-        story.append(Paragraph("Figure 5: Standardized regression coefficients ranked by absolute magnitude", caption_style))
+    # ================= 8. MODEL DIAGNOSTICS & BUSINESS DECISIONS (PAGE 6) =================
+    story.append(Paragraph("Model Diagnostics and Residual Analysis (Task 3e)", h2))
 
     if os.path.exists('figures/05_predicted_vs_actual_residuals.png'):
-        img = Image('figures/05_predicted_vs_actual_residuals.png', width=14.5*cm, height=6*cm)
+        img = Image('figures/05_predicted_vs_actual_residuals.png', width=14.5*cm, height=5.5*cm)
         story.append(img)
-        story.append(Paragraph("Figure 6: Predicted vs actual quality with jitter (left) and residual plot (right)", caption_style))
+        story.append(Paragraph("Figure 6: Predicted vs actual quality with jitter (left) and residual plot showing integer tier lines (right)", caption_style))
 
     story.append(Paragraph(
         "Predicted vs actual plots reveal that linear regression compresses predictions into a narrow band between 5.0 and 6.5. "
-        "Because wine quality is a discrete ordinal target (3 to 8), continuous regression tends to predict toward the central mean, "
-        "underpredicting exceptional wines (score 7-8) and overpredicting poor wines (score 3-4).",
+        "Because wine quality is a discrete ordinal target (3 to 8), continuous regression shrinks predictions toward the central training mean (5.63), "
+        "underpredicting exceptional wines (score 7-8) and overpredicting poor wines (score 3-4). "
+        "The residual plot exhibits distinct parallel downward lines (e = k - y_pred) corresponding to each discrete score integer level.",
         normal
     ))
+    story.append(Spacer(1, 0.2*cm))
 
-    # ================= 7. BUSINESS DECISIONS =================
+    # ================= BUSINESS DECISIONS =================
     story.append(Paragraph("6. Business Decision-Making (Task 4)", h1))
     story.append(Paragraph(
         "<b>Task 4a: Recommended Laboratory Screening Measurements</b><br/>"
         "Based on the empirical evidence, the winery should implement automated quality screening on two key chemical markers:<br/>"
         "1. <b>Alcohol Content:</b> Strongest positive correlation (r = +0.4803), largest standardized coefficient (+0.3340), and p < 0.0001. "
-        "Higher alcohol corresponds to complete grape maturation and balanced body.<br/>"
+        "Higher alcohol corresponds to complete grape maturation, sound sugar fermentation, and desirable body.<br/>"
         "2. <b>Volatile Acidity:</b> Second strongest correlation (r = -0.3952), largest negative standardized coefficient (-0.1785), and p < 0.0001. "
         "Elevated acetic acid indicates bacterial spoilage and poor sanitation.",
         normal
     ))
-    story.append(Spacer(1, 0.2*cm))
+    story.append(Spacer(1, 0.15*cm))
     story.append(Paragraph(
         "<b>Task 4b: Model Reliability for Sensory Panel Replacement</b><br/>"
         "The model is NOT reliable enough to replace expert sensory panels. "
-        "With an R2 of 0.3547 (explaining only ~35% of variance) and an RMSE of 0.6565 quality points on a discrete scale, "
+        "With an R2 of 0.3915 (explaining ~39% of variance) and an RMSE of 0.6565 quality points on a discrete scale, "
         "the model frequently misjudges wines by an entire rating tier. "
         "It should be deployed strictly as a pre-screening filter to detect flawed batches before submission to tasting panels.",
         normal
     ))
-    story.append(Spacer(1, 0.2*cm))
+    story.append(Spacer(1, 0.15*cm))
     story.append(Paragraph(
         "<b>Task 4c: Real-World Limitations</b><br/>"
         "1. The dataset is restricted to red Vinho Verde wines from northern Portugal; chemical benchmarks do not generalize to other varietals or regions.<br/>"
         "2. Target quality is an ordinal median score from expert tasters, which embodies sensory subjectivity and noise that linear regression cannot fully capture.",
         normal
     ))
+    story.append(PageBreak())
 
-    # ================= 8. CONCLUSION & LIMITATIONS =================
+    # ================= 9. CONCLUSION & LIMITATIONS (PAGE 7) =================
     story.append(Paragraph("7. Conclusion and Limitations", h1))
     story.append(Paragraph(
         "This case study successfully characterized the relationship between physicochemical attributes and red wine quality. "
-        "Multiple linear regression achieved moderate predictive utility (RMSE = 0.66, R2 = 0.35), identifying alcohol and volatile acidity "
+        "Multiple linear regression achieved moderate predictive utility (RMSE = 0.66, R2 = 0.39), identifying alcohol and volatile acidity "
         "as the primary drivers of sensory preference. While valuable for rapid automated vat screening, sensory tasting panels remain indispensable.",
         normal
     ))
+    story.append(Spacer(1, 0.2*cm))
+    story.append(Paragraph(
+        "Key limitations include: (1) restriction to red Vinho Verde wines, (2) ordinal nature of sensory scores, (3) severe class imbalance "
+        "(scores 5 and 6 dominate), (4) inability of linear models to capture non-linear biochemical interactions, and (5) absence of grape varietal, "
+        "vintage, or brand metadata.",
+        normal
+    ))
+    story.append(Spacer(1, 0.2*cm))
 
-    # ================= 9. REFERENCES & ATTRIBUTION =================
+    # ================= 10. REFERENCES & ATTRIBUTION =================
     story.append(Paragraph("8. References & Attribution", h1))
     story.append(Paragraph(
         "1. Cortez, P., Cerdeira, A., Almeida, F., Matos, T., and Reis, J. (2009). Modeling wine preferences by data mining from physicochemical properties. "
@@ -452,6 +473,20 @@ def build_pdf(student_name="<NAME>", roll_no="<ROLL NO>", section="<SECTION>", f
 
     doc.build(story, canvasmaker=NumberedCanvas)
     print(f"Generated: {pdf_path}")
+
+    # Generate preview PNG images using pymupdf
+    try:
+        import fitz
+        doc_pdf = fitz.open(pdf_path)
+        preview_dir = os.path.join(os.path.dirname(pdf_path), 'preview')
+        os.makedirs(preview_dir, exist_ok=True)
+        for i, page in enumerate(doc_pdf):
+            pix = page.get_pixmap(dpi=150)
+            pix.save(os.path.join(preview_dir, f'page_{i+1}.png'))
+        print(f"Exported {len(doc_pdf)} preview pages to {preview_dir}")
+    except Exception as e:
+        print(f"Preview generation warning: {e}")
+
     return pdf_path
 
 if __name__ == '__main__':

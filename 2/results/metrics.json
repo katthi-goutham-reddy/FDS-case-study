@@ -1,7 +1,7 @@
 {
   "chosen_k": 4,
   "best_linkage": "ward",
-  "best_dbscan_eps": 0.879,
+  "best_dbscan_eps": 0.878,
   "best_dbscan_min_samples": 10,
   "n_rows_after_outlier_removal": 3623,
   "n_rows_removed": 376,

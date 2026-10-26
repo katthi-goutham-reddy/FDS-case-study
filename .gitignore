@@ -5,3 +5,17 @@ __MACOSX/
 .DS_Store
 .Rhistory
 preview/
+report/cbit_preview/
+report/preview/
+report/reference_preview_14/
+report/*.png
+2/report/preview/
+5/report/preview/
+reference_preview/
+reference_preview_25/
+extracted_ref_images/
+watermark_with_alpha.png
+scratch/
+.tempmediaStorage/
+*160124733191*
+FDS case study - 2,5_160124733179.pdf

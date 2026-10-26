@@ -54,7 +54,8 @@ def build_pdf(student_name="<NAME>", roll_no="<ROLL NO>", section="<SECTION>", f
     skew_df = pd.read_csv('results/skewness_table.csv')
 
     os.makedirs('report', exist_ok=True)
-    pdf_path = f"report/CS2_Clustering_Analysis_{roll_no.replace('<', '').replace('>', '') if roll_no != '<ROLL NO>' else 'Report'}.pdf"
+    clean_roll = roll_no.replace('<', '').replace('>', '').strip()
+    pdf_path = f"report/CS2_Clustering_Analysis_{clean_roll if clean_roll and clean_roll != 'ROLL NO' else 'Report'}.pdf"
 
     doc = SimpleDocTemplate(
         pdf_path,
@@ -88,8 +89,8 @@ def build_pdf(student_name="<NAME>", roll_no="<ROLL NO>", section="<SECTION>", f
         fontSize=13,
         leading=17,
         textColor=colors.HexColor("#1b365d"),
-        spaceBefore=14,
-        spaceAfter=6,
+        spaceBefore=12,
+        spaceAfter=5,
         keepWithNext=True
     )
 
@@ -100,7 +101,7 @@ def build_pdf(student_name="<NAME>", roll_no="<ROLL NO>", section="<SECTION>", f
         fontSize=10.5,
         leading=14,
         textColor=colors.HexColor("#2b4c7e"),
-        spaceBefore=10,
+        spaceBefore=8,
         spaceAfter=4,
         keepWithNext=True
     )
@@ -113,7 +114,7 @@ def build_pdf(student_name="<NAME>", roll_no="<ROLL NO>", section="<SECTION>", f
         leading=11,
         textColor=colors.HexColor("#555555"),
         alignment=1,
-        spaceAfter=8
+        spaceAfter=6
     )
 
     table_cell = ParagraphStyle(
@@ -138,7 +139,7 @@ def build_pdf(student_name="<NAME>", roll_no="<ROLL NO>", section="<SECTION>", f
     story = []
 
     # ================= 1. TITLE PAGE =================
-    story.append(Spacer(1, 4 * cm))
+    story.append(Spacer(1, 3.5 * cm))
     story.append(Paragraph("Chaitanya Bharathi Institute of Technology (CBIT)", ParagraphStyle('College', fontName='Helvetica-Bold', fontSize=14, leading=18, alignment=1, textColor=colors.HexColor("#333333"))))
     story.append(Spacer(1, 0.4 * cm))
     story.append(Paragraph("Department of Computer Science and Engineering", ParagraphStyle('Dept', fontName='Helvetica', fontSize=11, leading=15, alignment=1, textColor=colors.HexColor("#666666"))))
@@ -148,7 +149,7 @@ def build_pdf(student_name="<NAME>", roll_no="<ROLL NO>", section="<SECTION>", f
     story.append(Paragraph("CASE STUDY 2: CLUSTERING ANALYSIS", title_style))
     story.append(Spacer(1, 0.3 * cm))
     story.append(Paragraph("Customer Segmentation on East-West Airlines Data Using K-Means, Hierarchical, and DBSCAN Clustering", ParagraphStyle('Sub', fontName='Helvetica-Oblique', fontSize=11, leading=15, alignment=1, textColor=colors.HexColor("#444444"))))
-    story.append(HRFlowable(width="80%", thickness=2, color=colors.HexColor("#1b365d"), spaceBefore=20, spaceAfter=30))
+    story.append(HRFlowable(width="80%", thickness=2, color=colors.HexColor("#1b365d"), spaceBefore=20, spaceAfter=25))
 
     story.append(Spacer(1, 1.5 * cm))
 
@@ -186,7 +187,7 @@ def build_pdf(student_name="<NAME>", roll_no="<ROLL NO>", section="<SECTION>", f
         "customer groups from behavioural data.",
         normal
     ))
-    story.append(Spacer(1, 0.2*cm))
+    story.append(Spacer(1, 0.15*cm))
     story.append(Paragraph(
         "Key objectives include: (1) cleaning and transforming highly skewed continuous features, (2) detecting and handling outliers "
         "without discarding genuine high-tier accounts, (3) evaluating three fundamentally distinct clustering paradigms (partitioning via K-Means, "
@@ -204,7 +205,7 @@ def build_pdf(student_name="<NAME>", roll_no="<ROLL NO>", section="<SECTION>", f
         "non-flight bonus transactions, flight transactions in the past 12 months, and award redemption history.",
         normal
     ))
-    story.append(Spacer(1, 0.2*cm))
+    story.append(Spacer(1, 0.15*cm))
     story.append(Paragraph(
         "Pre-modelling inspection confirmed 0 missing values and 0 duplicate records. However, substantial data quality challenges were present: "
         "the mileage and transaction attributes exhibit severe positive skewness (e.g. cc3_miles skewness = 17.20, Balance skewness = 5.00). "
@@ -223,10 +224,10 @@ def build_pdf(student_name="<NAME>", roll_no="<ROLL NO>", section="<SECTION>", f
         "All 10 feature columns were then normalized using StandardScaler (zero mean, unit variance).",
         normal
     ))
-    story.append(Spacer(1, 0.2*cm))
+    story.append(Spacer(1, 0.15*cm))
 
     if os.path.exists('figures/00_methodology_flowchart.png'):
-        img = Image('figures/00_methodology_flowchart.png', width=14.5*cm, height=8*cm)
+        img = Image('figures/00_methodology_flowchart.png', width=14*cm, height=7*cm)
         story.append(img)
         story.append(Paragraph("Figure 1: End-to-end customer segmentation methodology workflow", caption_style))
 
@@ -236,32 +237,34 @@ def build_pdf(student_name="<NAME>", roll_no="<ROLL NO>", section="<SECTION>", f
         "and a grid search across eps and min_samples).",
         normal
     ))
+    story.append(PageBreak())
 
     # ================= 5. STATISTICAL FINDINGS =================
     story.append(Paragraph("4. Statistical Findings & Exploratory Data Analysis", h1))
     story.append(Paragraph(
-        f"Skewness analysis identified 8 features with severe right-skewness > 1.0: cc3_miles (17.20), cc2_miles (8.73), Qual_miles (7.52), "
-        f"Flight_miles_12mo (7.45), Flight_trans_12 (5.49), Balance (5.00), Bonus_miles (2.84), and Bonus_trans (1.16). "
-        f"Following log1p transformation, feature distributions achieved near-normal symmetry, stabilizing Euclidean distance calculations.",
+        "Skewness analysis identified 8 features with severe right-skewness > 1.0: cc3_miles (17.20), cc2_miles (8.73), Qual_miles (7.52), "
+        "Flight_miles_12mo (7.45), Flight_trans_12 (5.49), Balance (5.00), Bonus_miles (2.84), and Bonus_trans (1.16). "
+        "Applying np.log1p transformed these distributions toward near-normal symmetry, stabilizing Euclidean distance calculations.",
         normal
     ))
-    story.append(Spacer(1, 0.2*cm))
+    story.append(Spacer(1, 0.15*cm))
 
     if os.path.exists('figures/01_raw_vs_log_histograms.png'):
-        img = Image('figures/01_raw_vs_log_histograms.png', width=14.5*cm, height=8.5*cm)
+        img = Image('figures/01_raw_vs_log_histograms.png', width=13.5*cm, height=8*cm)
         story.append(img)
-        story.append(Paragraph("Figure 2: Distribution comparison before (raw) and after log1p transformation", caption_style))
+        story.append(Paragraph("Figure 2: Distribution transformation: Raw vs log1p for key continuous attributes showing skewness reduction", caption_style))
 
     story.append(Paragraph(
-        "Correlation analysis indicated strong collinearity between credit card miles and bonus mileage (r = 0.84), as well as between recent flight "
-        "miles and flight transaction counts (r = 0.79). Principal Component Analysis revealed that the first two components capture 39.73% and "
-        "20.83% of total variance respectively (60.56% cumulative), displaying a continuous core cluster with extending peripheral branches.",
+        "Correlation analysis indicated strong collinearity between credit card miles and bonus mileage (r = 0.62), as well as between recent flight "
+        "miles and flight transaction counts (r = 0.93), and bonus miles and bonus transactions (r = 0.90). Constant features (cc2_miles and cc3_miles) "
+        "have zero variance post-filtering and are excluded from the correlation matrix to ensure a clean, fully populated structure. "
+        "PCA revealed that the first two components capture 39.73% and 20.83% of total variance respectively (60.56% cumulative).",
         normal
     ))
-    story.append(Spacer(1, 0.2*cm))
+    story.append(Spacer(1, 0.15*cm))
 
     if os.path.exists('figures/03_correlation_heatmap.png'):
-        img = Image('figures/03_correlation_heatmap.png', width=11.5*cm, height=8*cm)
+        img = Image('figures/03_correlation_heatmap.png', width=11.5*cm, height=7*cm)
         story.append(img)
         story.append(Paragraph("Figure 3: Feature correlation matrix across log-transformed customer attributes", caption_style))
 
@@ -275,12 +278,12 @@ def build_pdf(student_name="<NAME>", roll_no="<ROLL NO>", section="<SECTION>", f
         "Silhouette scores reached an absolute maximum at K=4 (0.3199), confirming 4 clusters as the optimal partitioning choice.",
         normal
     ))
-    story.append(Spacer(1, 0.2*cm))
+    story.append(Spacer(1, 0.15*cm))
 
     if os.path.exists('figures/06_kmeans_elbow_silhouette.png'):
-        img = Image('figures/06_kmeans_elbow_silhouette.png', width=14*cm, height=5.5*cm)
+        img = Image('figures/06_kmeans_elbow_silhouette.png', width=14*cm, height=5*cm)
         story.append(img)
-        story.append(Paragraph("Figure 4: K-Means evaluation: Inertia elbow curve (left) and Silhouette score profile (right)", caption_style))
+        story.append(Paragraph("Figure 4: K-Means evaluation: Inertia elbow curve (left) and Silhouette score profile (right) with K=4 highlighted", caption_style))
 
     story.append(Paragraph(
         "For Hierarchical clustering, truncated dendrograms were constructed across four linkage criteria. Ward linkage achieved the highest "
@@ -288,20 +291,21 @@ def build_pdf(student_name="<NAME>", roll_no="<ROLL NO>", section="<SECTION>", f
         "while Complete (0.2453) and Average (0.2518) produced less coherent partitions.",
         normal
     ))
-    story.append(Spacer(1, 0.2*cm))
+    story.append(Spacer(1, 0.15*cm))
 
     if os.path.exists('figures/07_dendrograms.png'):
-        img = Image('figures/07_dendrograms.png', width=14.5*cm, height=7*cm)
+        img = Image('figures/07_dendrograms.png', width=14*cm, height=6.5*cm)
         story.append(img)
-        story.append(Paragraph("Figure 5: Truncated hierarchical clustering dendrograms across linkage criteria", caption_style))
+        story.append(Paragraph("Figure 5: Truncated hierarchical clustering dendrograms across linkage criteria showing silhouette at K=4", caption_style))
 
     story.append(Paragraph(
-        f"For DBSCAN, the 5-nearest neighbour distance plot indicated a knee at distance 0.9413. Grid search across eps and min_samples identified "
-        f"eps = {metrics['best_dbscan_eps']} and min_samples = {metrics['best_dbscan_min_samples']} as the optimal configuration, identifying 3 dense clusters "
-        f"and classifying {metrics['dbscan']['n_noise']} accounts ({metrics['dbscan']['noise_pct']}%) as peripheral noise with non-noise silhouette = {metrics['dbscan']['silhouette']}.",
+        f"For DBSCAN, the 5-nearest neighbour distance curve sorted in ascending order demonstrated a clear knee region between distances 0.88 and 0.94. "
+        f"Grid search across eps and min_samples identified eps = {metrics['best_dbscan_eps']} and min_samples = {metrics['best_dbscan_min_samples']} "
+        f"as optimal, separating {metrics['dbscan']['n_noise']} accounts ({metrics['dbscan']['noise_pct']}%) as noise and identifying 3 dense customer cores "
+        f"with non-noise silhouette = {metrics['dbscan']['silhouette']}.",
         normal
     ))
-    story.append(Spacer(1, 0.2*cm))
+    story.append(Spacer(1, 0.15*cm))
 
     # Model comparison table
     story.append(Paragraph("<b>Table 1: Clustering Algorithm Performance Comparison</b>", h2))
@@ -319,7 +323,7 @@ def build_pdf(student_name="<NAME>", roll_no="<ROLL NO>", section="<SECTION>", f
             Paragraph(f"{row['Davies_Bouldin']:.4f}", table_cell),
             Paragraph(f"{row['Calinski_Harabasz']:.2f}", table_cell)
         ])
-    t = Table(table_rows, colWidths=[4.2*cm, 1.8*cm, 2.5*cm, 2.2*cm, 2.5*cm, 2.8*cm])
+    t = Table(table_rows, colWidths=[3.8*cm, 1.6*cm, 2.4*cm, 2.2*cm, 2.7*cm, 3.3*cm])
     t.setStyle(TableStyle([
         ('BACKGROUND', (0,0), (-1,0), colors.HexColor("#1b365d")),
         ('GRID', (0,0), (-1,-1), 0.5, colors.HexColor("#cbd5e1")),
@@ -328,25 +332,25 @@ def build_pdf(student_name="<NAME>", roll_no="<ROLL NO>", section="<SECTION>", f
         ('BOTTOMPADDING', (0,0), (-1,-1), 4),
     ]))
     story.append(t)
-    story.append(Spacer(1, 0.3*cm))
-
-    if os.path.exists('figures/09_cluster_pca_scatter.png'):
-        img = Image('figures/09_cluster_pca_scatter.png', width=14.5*cm, height=5*cm)
-        story.append(img)
-        story.append(Paragraph("Figure 6: 2D PCA cluster visualizations for K-Means, Hierarchical (Ward), and DBSCAN", caption_style))
+    story.append(PageBreak())
 
     # ================= 7. INTERPRETATION & CLUSTERING PROFILES =================
+    if os.path.exists('figures/09_cluster_pca_scatter.png'):
+        img = Image('figures/09_cluster_pca_scatter.png', width=14.5*cm, height=4.8*cm)
+        story.append(img)
+        story.append(Paragraph("Figure 6: 2D PCA cluster visualizations with centroids (K-Means) and noise classification (DBSCAN)", caption_style))
+
     story.append(Paragraph("6. Cluster Profiling and Marketing Strategy", h1))
     story.append(Paragraph(
         "K-Means segments were profiled by unscaling cluster centroids back to original units and analyzing award redemption rates:",
         normal
     ))
-    story.append(Spacer(1, 0.2*cm))
+    story.append(Spacer(1, 0.15*cm))
 
     if os.path.exists('figures/10_cluster_heatmap.png'):
-        img = Image('figures/10_cluster_heatmap.png', width=14*cm, height=6*cm)
+        img = Image('figures/10_cluster_heatmap.png', width=14*cm, height=6.5*cm)
         story.append(img)
-        story.append(Paragraph("Figure 7: Standardized cluster feature heatmap for K-Means personas", caption_style))
+        story.append(Paragraph("Figure 7: Standardized cluster feature heatmap for K-Means customer personas", caption_style))
 
     story.append(Paragraph(
         "<b>Cluster 0: Active Frequent Flyers (1,005 members, 27.7%)</b><br/>"
@@ -365,6 +369,7 @@ def build_pdf(student_name="<NAME>", roll_no="<ROLL NO>", section="<SECTION>", f
     ))
 
     # ================= 8. CONCLUSION & LIMITATIONS =================
+    story.append(PageBreak())
     story.append(Paragraph("7. Conclusion and Limitations", h1))
     story.append(Paragraph(
         "This investigation demonstrated that customer segmentation on airline frequent flyer data is highly effective when combined with "
@@ -393,6 +398,20 @@ def build_pdf(student_name="<NAME>", roll_no="<ROLL NO>", section="<SECTION>", f
 
     doc.build(story, canvasmaker=NumberedCanvas)
     print(f"Generated: {pdf_path}")
+
+    # Generate preview PNG images using pymupdf
+    try:
+        import fitz
+        doc_pdf = fitz.open(pdf_path)
+        preview_dir = os.path.join(os.path.dirname(pdf_path), 'preview')
+        os.makedirs(preview_dir, exist_ok=True)
+        for i, page in enumerate(doc_pdf):
+            pix = page.get_pixmap(dpi=150)
+            pix.save(os.path.join(preview_dir, f'page_{i+1}.png'))
+        print(f"Exported {len(doc_pdf)} preview pages to {preview_dir}")
+    except Exception as e:
+        print(f"Preview generation warning: {e}")
+
     return pdf_path
 
 if __name__ == '__main__':
