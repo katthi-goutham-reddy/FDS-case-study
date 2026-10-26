@@ -1,9 +1,5 @@
 # Fundamentals of Data Science (FDS) Case Studies 2 & 5
 
-<p align="center">
-  <img src="cbit_logo.jpeg" alt="CBIT Logo" width="120"/>
-</p>
-
 **Institution:** Chaitanya Bharathi Institute of Technology (CBIT), Hyderabad  
 **Department:** Department of Computer Science and Engineering  
 **Course:** Fundamentals of Data Science (22CSC59)  
@@ -38,11 +34,6 @@ This repository contains the deliverables for the practical assessment in **Fund
 
 ```text
 .
-├── .gitattributes                               # Git line-ending and binary file tracking configuration
-├── .gitignore                                   # Ignore rules for virtual environments, caches, and temp files
-├── cbit_logo.jpeg                               # CBIT institutional shield logo
-├── EastWestAirlines.xlsx                        # Dataset for Case Study 2 (East-West Airlines frequent flyers)
-├── winequality-red.csv                          # Dataset for Case Study 5 (Vinho Verde red wine physicochemical attributes)
 ├── FDS_Case_Studies_2_and_5_160124733179.ipynb  # Unified, fully executed Jupyter Notebook for both case studies
 ├── FDS_Case_Studies_2_and_5_160124733179.py     # Standalone executable Python script with all analysis pipelines
 ├── FDS_Case_Studies_Report_160124733179.pdf     # Official 21-page CBIT-format institutional technical report
@@ -59,7 +50,6 @@ This repository contains the deliverables for the practical assessment in **Fund
 | **Official Report** | `FDS_Case_Studies_Report_160124733179.pdf` | Complete 21-page institutional report following CBIT format (Certificate, Abstract, TOC, List of Figures/Tables, Chapters 1–4, and References). |
 | **Interactive Notebook** | `FDS_Case_Studies_2_and_5_160124733179.ipynb` | Google Colab / Jupyter-ready notebook with markdown documentation, code cells, and inline figures. |
 | **Executable Script** | `FDS_Case_Studies_2_and_5_160124733179.py` | Complete Python source code implementing both analytical workflows end-to-end. |
-| **Datasets** | `EastWestAirlines.xlsx`, `winequality-red.csv` | Original datasets used for reproducing all results and model metrics. |
 
 ---
 
